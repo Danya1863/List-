@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include "Header.h"
 using namespace std;
 
 class MyString
@@ -10,6 +11,7 @@ private:
 	static int obj_count;
 public:
 	MyString();
+	char operator[](int index);	 
 	MyString(const char*);
 	MyString(const MyString&);
 	~MyString();
@@ -47,6 +49,8 @@ MyString::MyString()
 
 MyString::MyString(const char* text)
 {
+	if (text == nullptr)
+		throw new NullException("Null.ptr\n");
 	str = new char[strlen(text) + 1];
 	strcpy_s(str, strlen(text) + 1, text);
 	length = strlen(text);
@@ -128,6 +132,8 @@ void MyString::MyStrCat(const MyString& b)
 
 void MyString::MyDelChr(char c)
 {
+	if (length == 0)
+		throw new SizeException("Size string = 0");
 	int count = 0;
 	for (int i = 0; i < strlen(str); i++)
 	{
@@ -180,11 +186,29 @@ MyString::MyString(initializer_list<char> a)
 		str[i] = a.begin()[i];
 	}
 }
+char MyString::operator[](int index)
+{
+	if (index < 0 || index >= length)
+		throw new IndexException("Incorect index\n");
+	if (index >= 0 && index < strlen(str))
+		return str[index];
+	else
+		return '\0';
+}
 int main()
 {
-	MyString obj1("Guten");
-	MyString obj2("Aben!!");
-	obj1.Print();
-	obj2.Print();
-	MyString::ObjCount();
+	MyString obj("Privet");
+	MyString zero("");
+	char c = '\0';
+	const char* ptr = nullptr;
+	try
+	{
+		MyString temp(ptr);
+		zero.MyDelChr(c);
+		cout << obj[-1];
+	}
+	catch (BaseException* check)
+	{
+		check->Print();
+	}
 }
